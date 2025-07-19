@@ -7,13 +7,14 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/Title.unity
-    guid: ce38e4910fb35844cb1c60b0be53de3e
+    guid: 6c07acf9c93922941b6f71fc26e5fe4e
   - enabled: 1
     path: Assets/Scenes/Lobby.unity
-    guid: a09e492740e9cba4a8b691aa7553fbe6
+    guid: 4dd35ec1ffa915245ad90f6fad9ba7a8
   - enabled: 1
     path: Assets/Scenes/InGame.unity
-    guid: e0341aef8e9ba224891d2228b4fd4828
+    guid: 1450f44f2afcf764882290283104bfa8
   m_configObjects:
+    com.unity.adaptiveperformance.simulator.provider_settings: {fileID: 11400000, guid: cb4f53b38886baf49aed76e63ef4d982, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
