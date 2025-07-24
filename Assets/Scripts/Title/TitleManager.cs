@@ -34,10 +34,14 @@ public class TitleManager : MonoBehaviour
             UserDataManager.Instance.SaveUserData();
         }
 
-        ChapterData ch1 = DataTableManager.Instance.GetChapterData(10);
-        ChapterData ch2 = DataTableManager.Instance.GetChapterData(50);
+        var confirmUIData = new ConfirmUIData();
+        confirmUIData.confirmType = confirmType.OK;
+        confirmUIData.titleText = "TITLE";
+        confirmUIData.DescriptionText = "Description WOW";
+        confirmUIData.OKButtonText = "OKKKK";
+        UIManager.Instance.OpenUI<ConfirmUI>(confirmUIData);
 
-        StartCoroutine(LoadGameCo());
+        //StartCoroutine(LoadGameCo());
     }
 
     private IEnumerator LoadGameCo()
