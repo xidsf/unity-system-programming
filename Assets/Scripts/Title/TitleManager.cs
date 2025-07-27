@@ -34,14 +34,10 @@ public class TitleManager : MonoBehaviour
             UserDataManager.Instance.SaveUserData();
         }
 
-        var confirmUIData = new ConfirmUIData();
-        confirmUIData.confirmType = confirmType.OK;
-        confirmUIData.titleText = "TITLE";
-        confirmUIData.DescriptionText = "Description WOW";
-        confirmUIData.OKButtonText = "OKKKK";
-        UIManager.Instance.OpenUI<ConfirmUI>(confirmUIData);
+        AudioManager.Instance.OnLoadUserData();
+        UIManager.Instance.EnableGoodsUI(false);
 
-        //StartCoroutine(LoadGameCo());
+        StartCoroutine(LoadGameCo());
     }
 
     private IEnumerator LoadGameCo()

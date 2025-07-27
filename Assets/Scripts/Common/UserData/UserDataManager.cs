@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UserDataManager : SingletonBehaviour<UserDataManager>
@@ -7,22 +8,22 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
     //저장된 유저 데이터 존재 여부
     public bool ExistsSavedData { get; private set; }
     //모든 유저 데이터 인스턴스를 저장하는 컨테이너
-    public List<IUserData> UserDataList { get; private set; } = new List<IUserData>();
+    public List<IUserData> userDataList { get; private set; } = new List<IUserData>();
 
     protected override void Init()
     {
         base.Init();
 
         //모든 유저 데이터를 UserDataList에 추가
-        UserDataList.Add(new UserSettingsData());
-        UserDataList.Add(new UserGoodsData());
+        userDataList.Add(new UserSettingsData());
+        userDataList.Add(new UserGoodsData());
     }
 
     public void SetDefaultUserData()
     {
-        for (int i = 0; i < UserDataList.Count; i++)
+        for (int i = 0; i < userDataList.Count; i++)
         {
-            UserDataList[i].SetDefaultData();
+            userDataList[i].SetDefaultData();
         }
     }
 
@@ -32,9 +33,9 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
 
         if(ExistsSavedData)
         {
-            for (int i = 0; i < UserDataList.Count; i++)
+            for (int i = 0; i < userDataList.Count; i++)
             {
-                UserDataList[i].LoadData();
+                userDataList[i].LoadData();
             }
         }
     }
@@ -43,9 +44,9 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
     {
         bool hasSaveError = false;
 
-        for (int i = 0; i < UserDataList.Count; i++)
+        for (int i = 0; i < userDataList.Count; i++)
         {
-            bool isSaveSuccess = UserDataList[i].SaveData();
+            bool isSaveSuccess = userDataList[i].SaveData();
             if(!isSaveSuccess)
             {
                 hasSaveError = true;
@@ -58,5 +59,10 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
             PlayerPrefs.SetInt("ExistsSavedData", 1);
             PlayerPrefs.Save();
         }
+    }
+
+    public T GetUserData<T>() where T : class, IUserData
+    {
+        return userDataList.OfType<T>().FirstOrDefault();
     }
 }

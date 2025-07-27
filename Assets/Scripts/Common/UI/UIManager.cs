@@ -10,6 +10,21 @@ public class UIManager : SingletonBehaviour<UIManager>
     private Dictionary<System.Type, GameObject> m_OpendUIPool = new Dictionary<System.Type, GameObject>();
     private Dictionary<System.Type, GameObject> m_ClosedUIPool = new Dictionary<System.Type, GameObject>();
 
+    private GoodsUI m_GoodsUI;
+
+    protected override void Init()
+    {
+        base.Init();
+
+        m_GoodsUI = FindAnyObjectByType<GoodsUI>();
+        if(m_GoodsUI == null)
+        {
+            Logger.LogError($"{GetType()} :: Init - m_GoodsUI is null");
+        }
+    }
+
+    public Camera UICamera;
+
     private BaseUI GetUI<T>(out bool isAlreadyOpen)
     {
         System.Type uiType = typeof(T);
@@ -55,7 +70,7 @@ public class UIManager : SingletonBehaviour<UIManager>
             return;
         }
 
-        var siblingIndex = m_UICanvasTransform.childCount;
+        var siblingIndex = m_UICanvasTransform.childCount - 1;
         ui.Init(m_UICanvasTransform);
         ui.transform.SetSiblingIndex(siblingIndex);
         ui.gameObject.SetActive(true);
@@ -88,12 +103,12 @@ public class UIManager : SingletonBehaviour<UIManager>
         return m_OpendUIPool.ContainsKey(uiType) ? m_OpendUIPool[uiType].GetComponent<BaseUI>() : null;
     }
 
-    public bool ExistsOpenUI()
+    public bool IsExistsOpenUI()
     {
         return m_FrontUI != null;
     }
 
-    public BaseUI GetCurrentUI()
+    public BaseUI GetCurrentFrontUI()
     {
         return m_FrontUI;
     }
@@ -108,6 +123,15 @@ public class UIManager : SingletonBehaviour<UIManager>
         while(!m_FrontUI)
         {
             m_FrontUI.CloseUI();
+        }
+    }
+
+    public void EnableGoodsUI(bool value)
+    {
+        m_GoodsUI.gameObject.SetActive(value);
+        if(value)
+        {
+            m_GoodsUI.SetValues();
         }
     }
 }
