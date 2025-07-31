@@ -17,6 +17,7 @@ public class UserDataManager : SingletonBehaviour<UserDataManager>
         //모든 유저 데이터를 UserDataList에 추가
         userDataList.Add(new UserSettingsData());
         userDataList.Add(new UserGoodsData());
+        userDataList.Add(new UserInventoryData());
     }
 
     public void SetDefaultUserData()
