@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class InventoryItemSlotData : InfiniteScrollData
 {
-    public string serialNumber;
+    public long serialNumber;
     public int itemID;
 }
 
@@ -45,5 +45,13 @@ public class InventoryItemSlot : InfiniteScrollItem
         {
             itemIcon.sprite = Sprite.Create(itemIconTexture, new Rect(0, 0, itemIconTexture.width, itemIconTexture.height), new Vector2(1f, 1f));
         }
+    }
+
+    public void OnClickItemSlot()
+    {
+        var equipementUIData = new EquipmentUIData();
+        equipementUIData.itemID = m_InventorySlotData.itemID;
+        equipementUIData.serialNumber = m_InventorySlotData.serialNumber;
+        UIManager.Instance.OpenUI<EquipmentUI>(equipementUIData);
     }
 }

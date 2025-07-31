@@ -1,7 +1,5 @@
 using Gpm.Ui;
 using TMPro;
-using UnityEngine;
-using static UnityEditor.Progress;
 
 public enum InventorySortType
 {
@@ -33,7 +31,7 @@ public class InventoryUI : BaseUI
             {
                 InventoryItemSlotData newItemData = new InventoryItemSlotData
                 {
-                    serialNumber = item.serialNumber.ToString(),
+                    serialNumber = item.serialNumber,
                     itemID = item.itemID
                 };
 
