@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.Data;
+using Mono.Cecil;
 
 [Serializable]
 public class UserItemData
@@ -23,9 +24,30 @@ public class UserInventoryItemDataListWrapper
     public List<UserItemData> inventoryItemDataList;
 }
 
+public class UserItemStats
+{
+    public int attackPower;
+    public int defense;
+
+    public UserItemStats(int attackPower, int defense)
+    {
+        this.attackPower = attackPower;
+        this.defense = defense;
+    }
+}
+
 public class UserInventoryData : IUserData
 {
+    public UserItemData equipmentWeaponData { get; set; }
+    public UserItemData equipmentShieldData { get; set; }
+    public UserItemData equipmentChestArmorData { get; set; }
+    public UserItemData equipmentBootsData { get; set; }
+    public UserItemData equipmentGlovesData { get; set; }
+    public UserItemData equipmentAccessaryData { get; set; }
+
     public List<UserItemData> inventoryItemDataList { get; set; } = new List<UserItemData>();
+
+    public Dictionary<long, UserItemStats> EquippedItemDic { get; set; } = new Dictionary<long, UserItemStats>();
 
     public void SetDefaultData()
     {
@@ -47,7 +69,10 @@ public class UserInventoryData : IUserData
         inventoryItemDataList.Add(new UserItemData(long.Parse(DateTime.Now.ToString("yyyyMMddHHmmss") + UnityEngine.Random.Range(0, 9999).ToString("D4")), 65001));
         inventoryItemDataList.Add(new UserItemData(long.Parse(DateTime.Now.ToString("yyyyMMddHHmmss") + UnityEngine.Random.Range(0, 9999).ToString("D4")), 65002));
 
+        equipmentWeaponData = new UserItemData(inventoryItemDataList[0].serialNumber, inventoryItemDataList[0].itemID);
+        equipmentShieldData = new UserItemData(inventoryItemDataList[2].serialNumber, inventoryItemDataList[2].itemID);
 
+        SetEquippedItemDictionary();
     }
 
     public bool LoadData()
@@ -58,6 +83,49 @@ public class UserInventoryData : IUserData
 
         try
         {
+            string weaponJson = PlayerPrefs.GetString("equipmentWeaponData");
+            if(!string.IsNullOrEmpty(weaponJson))
+            {
+                equipmentWeaponData = JsonUtility.FromJson<UserItemData>(weaponJson);
+                Logger.Log($"equipmentWeaponData: SerialNum: {equipmentWeaponData.serialNumber}  itemID: {equipmentWeaponData.itemID}");
+            }
+
+            string shieldJson = PlayerPrefs.GetString("equipmentShieldData");
+            if (!string.IsNullOrEmpty(shieldJson))
+            {
+                equipmentShieldData = JsonUtility.FromJson<UserItemData>(shieldJson);
+                Logger.Log($"equipmentShieldData: SerialNum: {equipmentShieldData.serialNumber}  itemID: {equipmentShieldData.itemID}");
+            }
+
+            string chestArmorJson = PlayerPrefs.GetString("equipmentChestArmorData");
+            if (!string.IsNullOrEmpty(chestArmorJson))
+            {
+                equipmentChestArmorData = JsonUtility.FromJson<UserItemData>(chestArmorJson);
+                Logger.Log($"equipmentChestArmorData: SerialNum: {equipmentChestArmorData.serialNumber}  itemID: {equipmentChestArmorData.itemID}");
+            }
+
+            string bootsJson = PlayerPrefs.GetString("equipmentBootsData");
+            if (!string.IsNullOrEmpty(bootsJson))
+            {
+                equipmentBootsData = JsonUtility.FromJson<UserItemData>(bootsJson);
+                Logger.Log($"equipmentBootsData: SerialNum: {equipmentBootsData.serialNumber}  itemID: {equipmentBootsData.itemID}");
+            }
+
+            string glovesJson = PlayerPrefs.GetString("equipmentGlovesData");
+            if (!string.IsNullOrEmpty(glovesJson))
+            {
+                equipmentGlovesData = JsonUtility.FromJson<UserItemData>(glovesJson);
+                Logger.Log($"equipmentGlovesData: SerialNum: {equipmentGlovesData.serialNumber}  itemID: {equipmentGlovesData.itemID}");
+            }
+
+            string accessaryJson = PlayerPrefs.GetString("equipmentAccessaryData");
+            if (!string.IsNullOrEmpty(accessaryJson))
+            {
+                equipmentAccessaryData = JsonUtility.FromJson<UserItemData>(accessaryJson);
+                Logger.Log($"equipmentAccessaryData: SerialNum: {equipmentAccessaryData.serialNumber}  itemID: {equipmentAccessaryData.itemID}");
+            }
+
+
             string inventoryItemListJson = PlayerPrefs.GetString("inventoryItemDataList");
             if(!string.IsNullOrEmpty(inventoryItemListJson))
             {
@@ -70,6 +138,8 @@ public class UserInventoryData : IUserData
                     Logger.Log($"Load: {item.serialNumber} :: {item.itemID}");
                 }
             }
+
+            SetEquippedItemDictionary();
             result = true;
         }
         catch(System.Exception e)
@@ -87,6 +157,49 @@ public class UserInventoryData : IUserData
 
         try
         {
+            string weaponJson = JsonUtility.ToJson(equipmentWeaponData);
+            PlayerPrefs.SetString("equipmentWeaponData", weaponJson);
+            if(!string.IsNullOrEmpty(weaponJson))
+            {
+                Logger.Log($"equipmentWeaponData: SerialNum: {equipmentWeaponData.serialNumber}  itemID: {equipmentWeaponData.itemID}");
+            }
+
+            string shieldJson = JsonUtility.ToJson(equipmentShieldData);
+            PlayerPrefs.SetString("equipmentShieldData", shieldJson);
+            if (!string.IsNullOrEmpty(shieldJson))
+            {
+                Logger.Log($"equipmentShieldData: SerialNum: {equipmentShieldData.serialNumber}  itemID: {equipmentShieldData.itemID}");
+            }
+
+            string chestArmorJson = JsonUtility.ToJson(equipmentChestArmorData);
+            PlayerPrefs.SetString("equipmentChestArmorData", chestArmorJson);
+            if (!string.IsNullOrEmpty(chestArmorJson))
+            {
+                Logger.Log($"equipmentChestArmorData: SerialNum: {equipmentChestArmorData.serialNumber}  itemID: {equipmentChestArmorData.itemID}");
+            }
+
+            string bootsJson = JsonUtility.ToJson(equipmentBootsData);
+            PlayerPrefs.SetString("equipmentBootsData", bootsJson);
+            if (!string.IsNullOrEmpty(bootsJson))
+            {
+                Logger.Log($"equipmentBootsData: SerialNum: {equipmentBootsData.serialNumber}  itemID: {equipmentBootsData.itemID}");
+            }
+
+            string glovesJson = JsonUtility.ToJson(equipmentGlovesData);
+            PlayerPrefs.SetString("equipmentGlovesData", glovesJson);
+            if (!string.IsNullOrEmpty(glovesJson))
+            {
+                Logger.Log($"equipmentGlovesData: SerialNum: {equipmentGlovesData.serialNumber}  itemID: {equipmentGlovesData.itemID}");
+            }
+
+            string accessaryJson = JsonUtility.ToJson(equipmentAccessaryData);
+            PlayerPrefs.SetString("equipmentAccessaryData", accessaryJson);
+            if (!string.IsNullOrEmpty(accessaryJson))
+            {
+                Logger.Log($"equipmentAccessaryData: SerialNum: {equipmentAccessaryData.serialNumber}  itemID: {equipmentAccessaryData.itemID}");
+            }
+
+
             UserInventoryItemDataListWrapper wrapperItemData = new UserInventoryItemDataListWrapper();
             wrapperItemData.inventoryItemDataList = inventoryItemDataList;
             string jsonStringItemData = JsonUtility.ToJson(wrapperItemData);
@@ -108,5 +221,71 @@ public class UserInventoryData : IUserData
         return result;
     }
 
-    
+    public void SetEquippedItemDictionary()
+    {
+        if(equipmentWeaponData != null)
+        {
+            var itemData = DataTableManager.Instance.FindItemData(equipmentWeaponData.itemID);
+            if(itemData != null)
+            {
+                var itemStatsData = new UserItemStats(itemData.attackPower, itemData.defense);
+                EquippedItemDic.Add(equipmentWeaponData.serialNumber, itemStatsData);
+            }
+            
+        }
+        if(equipmentShieldData != null)
+        {
+            var itemData = DataTableManager.Instance.FindItemData(equipmentShieldData.itemID);
+            if (itemData != null)
+            {
+                var itemStatsData = new UserItemStats(itemData.attackPower, itemData.defense);
+                EquippedItemDic.Add(equipmentShieldData.serialNumber, itemStatsData);
+            }
+                
+        }
+        if (equipmentGlovesData != null)
+        {
+            var itemData = DataTableManager.Instance.FindItemData(equipmentGlovesData.itemID);
+            if (itemData != null)
+            {
+                var itemStatsData = new UserItemStats(itemData.attackPower, itemData.defense);
+                EquippedItemDic.Add(equipmentGlovesData.serialNumber, itemStatsData);
+            }
+                
+        }
+        if (equipmentChestArmorData != null)
+        {
+            var itemData = DataTableManager.Instance.FindItemData(equipmentChestArmorData.itemID);
+            if (itemData != null)
+            {
+                var itemStatsData = new UserItemStats(itemData.attackPower, itemData.defense);
+                EquippedItemDic.Add(equipmentChestArmorData.serialNumber, itemStatsData);
+            }
+               
+        }
+        if (equipmentBootsData != null)
+        {
+            var itemData = DataTableManager.Instance.FindItemData(equipmentBootsData.itemID);
+            if (itemData != null)
+            {
+                var itemStatsData = new UserItemStats(itemData.attackPower, itemData.defense);
+                EquippedItemDic.Add(equipmentBootsData.serialNumber, itemStatsData);
+            }
+                
+        }
+        if (equipmentAccessaryData != null)
+        {
+            var itemData = DataTableManager.Instance.FindItemData(equipmentAccessaryData.itemID);
+            if (itemData != null)
+            {
+                var itemStatsData = new UserItemStats(itemData.attackPower, itemData.defense);
+                EquippedItemDic.Add(equipmentAccessaryData.serialNumber, itemStatsData);
+            }
+        }
+    }
+
+    public bool IsEquipped(long serialNum)
+    {
+        return EquippedItemDic.ContainsKey(serialNum);
+    }
 }

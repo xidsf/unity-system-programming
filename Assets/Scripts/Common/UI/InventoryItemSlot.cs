@@ -52,6 +52,7 @@ public class InventoryItemSlot : InfiniteScrollItem
         var equipementUIData = new EquipmentUIData();
         equipementUIData.itemID = m_InventorySlotData.itemID;
         equipementUIData.serialNumber = m_InventorySlotData.serialNumber;
+        equipementUIData.isEquipped = false;
         UIManager.Instance.OpenUI<EquipmentUI>(equipementUIData);
     }
 }

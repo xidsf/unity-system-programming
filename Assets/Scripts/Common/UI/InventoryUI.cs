@@ -14,11 +14,85 @@ public class InventoryUI : BaseUI
     public TextMeshProUGUI SortButtonText;
     private InventorySortType m_CurrentInventorySortType = InventorySortType.ItemGrade;
 
+    public EquippedItemSlot weaponSlot;
+    public EquippedItemSlot shieldSlot;
+    public EquippedItemSlot chestArmorSlot;
+    public EquippedItemSlot bootsSlot;
+    public EquippedItemSlot glovesSlot;
+    public EquippedItemSlot accessorySlot;
+
+
     public override void SetInfo(BaseUIData data)
     {
         base.SetInfo(data);
+
+        SetEquippedItems();
         SetInventory();
         SortInventory();
+    }
+
+    private void SetEquippedItems()
+    {
+        var userInventoryData = UserDataManager.Instance.GetUserData<UserInventoryData>();
+        if(userInventoryData == null)
+        {
+            Logger.LogError("userInventoryData is null");
+            return;
+        }
+
+        if(userInventoryData.equipmentWeaponData != null)
+        {
+            weaponSlot.SetItem(userInventoryData.equipmentWeaponData);
+        }
+        else
+        {
+            weaponSlot.ClearItem();
+        }
+
+        if (userInventoryData.equipmentShieldData != null)
+        {
+            shieldSlot.SetItem(userInventoryData.equipmentShieldData);
+        }
+        else
+        {
+            shieldSlot.ClearItem();
+        }
+
+        if (userInventoryData.equipmentGlovesData != null)
+        {
+            glovesSlot.SetItem(userInventoryData.equipmentGlovesData);
+        }
+        else
+        {
+            glovesSlot.ClearItem();
+        }
+
+        if (userInventoryData.equipmentChestArmorData != null)
+        {
+            chestArmorSlot.SetItem(userInventoryData.equipmentChestArmorData);
+        }
+        else
+        {
+            chestArmorSlot.ClearItem();
+        }
+
+        if (userInventoryData.equipmentBootsData != null)
+        {
+            bootsSlot.SetItem(userInventoryData.equipmentBootsData);
+        }
+        else
+        {
+            bootsSlot.ClearItem();
+        }
+
+        if (userInventoryData.equipmentAccessaryData != null)
+        {
+            accessorySlot.SetItem(userInventoryData.equipmentAccessaryData);
+        }
+        else
+        {
+            accessorySlot.ClearItem();
+        }
     }
     private void SetInventory()
     {
@@ -29,6 +103,10 @@ public class InventoryUI : BaseUI
         {
             foreach (var item in userInventoryData.inventoryItemDataList)
             {
+                if(userInventoryData.IsEquipped(item.serialNumber))
+                {
+                    continue;
+                }
                 InventoryItemSlotData newItemData = new InventoryItemSlotData
                 {
                     serialNumber = item.serialNumber,
