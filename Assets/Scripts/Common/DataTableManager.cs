@@ -7,7 +7,6 @@ public class DataTableManager : SingletonBehaviour<DataTableManager>
 {
     private const string DATA_PATH = "DataTables";
 
-
     protected override void Init()
     {
         base.Init();
@@ -30,6 +29,7 @@ public class DataTableManager : SingletonBehaviour<DataTableManager>
             var chapterDataTable = new ChapterData
             {
                 chapterNo = Convert.ToInt32(data["chapter_no"]),
+                chapterName = data["chapter_name"].ToString(),
                 totalStage = Convert.ToInt32(data["total_stages"]),
                 chapterRewardGem = Convert.ToInt32(data["chapter_reward_gem"]),
                 ChapterRewardGold = Convert.ToInt32(data["chapter_reward_gold"])
@@ -67,7 +67,7 @@ public class DataTableManager : SingletonBehaviour<DataTableManager>
         }
     }
 
-    public ItemData FindItemData(int itemID)
+    public ItemData GetItemData(int itemID)
     {
         return itemDataTable.Where(item => item.itemID == itemID).FirstOrDefault();
     }
@@ -79,6 +79,7 @@ public class DataTableManager : SingletonBehaviour<DataTableManager>
 public class ChapterData
 {
     public int chapterNo;
+    public string chapterName;
     public int totalStage;
     public int chapterRewardGem;
     public int ChapterRewardGold;

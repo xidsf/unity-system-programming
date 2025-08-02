@@ -4134,6 +4134,8 @@ MonoBehaviour:
   m_UIOpenAnim: {fileID: 0}
   infiniteScrollList: {fileID: 4297591513047932391}
   SortButtonText: {fileID: 7206056449295334989}
+  totalAttackPowerText: {fileID: 5593740923362549781}
+  totalDefenseText: {fileID: 1413027110217925779}
   weaponSlot: {fileID: 691015685458262108}
   shieldSlot: {fileID: 8229460332562446564}
   chestArmorSlot: {fileID: 753015899015826580}

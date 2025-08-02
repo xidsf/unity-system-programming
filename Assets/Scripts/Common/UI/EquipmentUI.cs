@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -17,13 +18,12 @@ public class EquipmentUI : BaseUI
     public TextMeshProUGUI itemNameText;
     public TextMeshProUGUI itemPowerText;
     public TextMeshProUGUI itemDefenseText;
+    public TextMeshProUGUI equipButtonText;
 
     public Image itemIconImage;
     public Image itemGradeBackground;
 
     private EquipmentUIData m_EquipmentUIData;
-
-    Action OnEquipment;
 
     public override void SetInfo(BaseUIData data)
     {
@@ -36,7 +36,7 @@ public class EquipmentUI : BaseUI
             return;
         }
 
-        var itemData = DataTableManager.Instance.FindItemData(m_EquipmentUIData.itemID);
+        var itemData = DataTableManager.Instance.GetItemData(m_EquipmentUIData.itemID);
 
         if(itemData == null)
         {
@@ -92,5 +92,43 @@ public class EquipmentUI : BaseUI
         itemNameText.text = itemData.itemName;
         itemPowerText.text = '+'+itemData.attackPower.ToString();
         itemDefenseText.text = '+' + itemData.defense.ToString();
+
+        equipButtonText.text = m_EquipmentUIData.isEquipped ? "Unequip" : "Equip";
+    }
+
+    public void OnClickEquipButton()
+    {
+        var intenvoryData = UserDataManager.Instance.GetUserData<UserInventoryData>();
+        if(intenvoryData == null)
+        {
+            Logger.LogError("inventoryData is null");
+            return;
+        }
+
+        if (m_EquipmentUIData.isEquipped)
+        {
+            intenvoryData.UnequipItem(m_EquipmentUIData.serialNumber, m_EquipmentUIData.itemID);
+        }
+        else
+        {
+            intenvoryData.EquipItem(m_EquipmentUIData.serialNumber, m_EquipmentUIData.itemID);
+        }
+
+        intenvoryData.SaveData();
+
+        var inventoryUI = UIManager.Instance.GetActiveUI<InventoryUI>() as InventoryUI;
+        if(inventoryUI != null)
+        {
+            if (m_EquipmentUIData.isEquipped)
+            {
+                inventoryUI.OnUnequipItem(m_EquipmentUIData.itemID);
+            }
+            else
+            {
+                inventoryUI.OnEquipItem(m_EquipmentUIData.itemID);
+            }
+        }
+
+        CloseUI();
     }
 }

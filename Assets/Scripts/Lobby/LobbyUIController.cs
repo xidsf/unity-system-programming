@@ -1,10 +1,17 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LobbyUIController : MonoBehaviour
 {
+    public TextMeshProUGUI currChapterNameText;
+    public RawImage currChapterBg;
+    //RawImage는 그냥 이미지만 사용하는 것. 배경 택스쳐같이 여러 기능이 필요 없는 이미지는 RawImage가 적절
+
     public void Init()
     {
         UIManager.Instance.EnableGoodsUI(true);
+        SetCurrentChapter();
     }
 
     private void Update()
@@ -43,6 +50,30 @@ public class LobbyUIController : MonoBehaviour
         }
     }
 
+    public void SetCurrentChapter()
+    {
+        var userPlayData = UserDataManager.Instance.GetUserData<UserPlayData>();
+        if(userPlayData == null)
+        {
+            Logger.LogError("userPlayData is null");
+            return;
+        }
+
+        var currentSelectedChapter = DataTableManager.Instance.GetChapterData(userPlayData.CurrentSelectedChapter);
+        if(currentSelectedChapter == null)
+        {
+            Logger.LogError("current Chapter Data is null");
+            return;
+        }
+
+        currChapterNameText.text = currentSelectedChapter.chapterName;
+        var bgTexture = Resources.Load<Texture2D>($"ChapterBG/Background_{userPlayData.CurrentSelectedChapter.ToString("D3")}");
+        if(bgTexture != null)
+        {
+            currChapterBg.texture = bgTexture;
+        }
+    }    
+
     public void OnClickProfileButton()
     {
         Logger.Log($"{GetType()}::OnClickProfileButton()");
@@ -55,5 +86,11 @@ public class LobbyUIController : MonoBehaviour
         Logger.Log($"{GetType()}:: OnClickSettingsButton");
         var uiData = new BaseUIData();
         UIManager.Instance.OpenUI<SettingsUI>(uiData);
+    }
+
+    public void OnClickCurrChapterImage()
+    {
+        var uiData = new BaseUIData();
+        UIManager.Instance.OpenUI<ChapterListUI>(uiData);
     }
 }

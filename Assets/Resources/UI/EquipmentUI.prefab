@@ -921,6 +921,7 @@ MonoBehaviour:
   itemNameText: {fileID: 2180642332043355331}
   itemPowerText: {fileID: 2180642332867396455}
   itemDefenseText: {fileID: 2180642331270726093}
+  equipButtonText: {fileID: 2180642332428886416}
   itemIconImage: {fileID: 2180642332255977316}
   itemGradeBackground: {fileID: 2180642332443482388}
 --- !u!1 &2180642332043355333
@@ -1180,7 +1181,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2180642332070407508}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 507707355866263186}
+        m_TargetAssemblyTypeName: EquipmentUI, Assembly-CSharp
+        m_MethodName: OnClickEquipButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!95 &9168409472410559563
 Animator:
   serializedVersion: 7
@@ -1583,8 +1596,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

@@ -12,6 +12,10 @@ public class InventoryUI : BaseUI
 {
     public InfiniteScroll infiniteScrollList;
     public TextMeshProUGUI SortButtonText;
+
+    public TextMeshProUGUI totalAttackPowerText;
+    public TextMeshProUGUI totalDefenseText;
+
     private InventorySortType m_CurrentInventorySortType = InventorySortType.ItemGrade;
 
     public EquippedItemSlot weaponSlot;
@@ -26,9 +30,26 @@ public class InventoryUI : BaseUI
     {
         base.SetInfo(data);
 
+        SetTotalStats();
         SetEquippedItems();
         SetInventory();
         SortInventory();
+    }
+
+
+    private void SetTotalStats()
+    {
+        var userInventoryData = UserDataManager.Instance.GetUserData<UserInventoryData>();
+
+        if(userInventoryData == null)
+        {
+            Logger.LogError("UserInventoryData is null");
+            return;
+        }
+
+        var itemTotalStats = userInventoryData.GetUserTotalItemStats();
+        totalAttackPowerText.text = '+' + itemTotalStats.attackPower.ToString("N0");
+        totalDefenseText.text = '+' + itemTotalStats.defense.ToString("N0");
     }
 
     private void SetEquippedItems()
@@ -85,9 +106,9 @@ public class InventoryUI : BaseUI
             bootsSlot.ClearItem();
         }
 
-        if (userInventoryData.equipmentAccessaryData != null)
+        if (userInventoryData.equipmentAccessoryData != null)
         {
-            accessorySlot.SetItem(userInventoryData.equipmentAccessaryData);
+            accessorySlot.SetItem(userInventoryData.equipmentAccessoryData);
         }
         else
         {
@@ -191,6 +212,77 @@ public class InventoryUI : BaseUI
             default:
                 break;
         }
+        SortInventory();
+    }
+
+    public void OnEquipItem(int itemId)
+    {
+        var userInventoryData = UserDataManager.Instance.GetUserData<UserInventoryData>();
+        if (userInventoryData == null)
+        {
+            Logger.LogError("UserInventoryData does not exist.");
+            return;
+        }
+
+        var itemType = (ItemType)(itemId / 10000);
+        switch (itemType)
+        {
+            case ItemType.Weapon:
+                weaponSlot.SetItem(userInventoryData.equipmentWeaponData);
+                break;
+            case ItemType.Shield:
+                shieldSlot.SetItem(userInventoryData.equipmentShieldData);
+                break;
+            case ItemType.ChestArmor:
+                chestArmorSlot.SetItem(userInventoryData.equipmentChestArmorData);
+                break;
+            case ItemType.Gloves:
+                glovesSlot.SetItem(userInventoryData.equipmentGlovesData);
+                break;
+            case ItemType.Boots:
+                bootsSlot.SetItem(userInventoryData.equipmentBootsData);
+                break;
+            case ItemType.Accessory:
+                accessorySlot.SetItem(userInventoryData.equipmentAccessoryData);
+                break;
+            default:
+                break;
+        }
+
+        SetTotalStats();
+        SetInventory();
+        SortInventory();
+    }
+
+    public void OnUnequipItem(int itemId)
+    {
+        var itemType = (ItemType)(itemId / 10000);
+        switch (itemType)
+        {
+            case ItemType.Weapon:
+                weaponSlot.ClearItem();
+                break;
+            case ItemType.Shield:
+                shieldSlot.ClearItem();
+                break;
+            case ItemType.ChestArmor:
+                chestArmorSlot.ClearItem();
+                break;
+            case ItemType.Gloves:
+                glovesSlot.ClearItem();
+                break;
+            case ItemType.Boots:
+                bootsSlot.ClearItem();
+                break;
+            case ItemType.Accessory:
+                accessorySlot.ClearItem();
+                break;
+            default:
+                break;
+        }
+
+        SetTotalStats();
+        SetInventory();
         SortInventory();
     }
 }
