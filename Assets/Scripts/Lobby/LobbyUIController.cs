@@ -93,4 +93,13 @@ public class LobbyUIController : MonoBehaviour
         var uiData = new BaseUIData();
         UIManager.Instance.OpenUI<ChapterListUI>(uiData);
     }
+
+    public void OnClickStartButton()
+    {
+        Logger.Log("OnClickStartButton");
+
+        AudioManager.Instance.PlaySFX(SFX.ui_button_click);
+        AudioManager.Instance.StopBGM();
+        LobbyManager.Instance.StartInGame();
+    }
 }

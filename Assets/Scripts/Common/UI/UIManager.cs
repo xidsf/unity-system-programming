@@ -1,10 +1,15 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : SingletonBehaviour<UIManager>
 {
     public Transform m_UICanvasTransform;
     public Transform m_ClosedUITransform;
+
+    public Image fadeImage;
 
     private BaseUI m_FrontUI;
     private Dictionary<System.Type, GameObject> m_OpendUIPool = new Dictionary<System.Type, GameObject>();
@@ -15,6 +20,8 @@ public class UIManager : SingletonBehaviour<UIManager>
     protected override void Init()
     {
         base.Init();
+
+        fadeImage.transform.localScale = Vector3.zero;
 
         m_GoodsUI = FindAnyObjectByType<GoodsUI>();
         if(m_GoodsUI == null)
@@ -90,7 +97,7 @@ public class UIManager : SingletonBehaviour<UIManager>
         ui.transform.SetParent(m_ClosedUITransform);
         m_FrontUI = null;
 
-        var lastChild = m_UICanvasTransform.GetChild(m_UICanvasTransform.childCount - 1);
+        var lastChild = m_UICanvasTransform.GetChild(m_UICanvasTransform.childCount - 3);
         if(lastChild)
         {
             m_FrontUI = lastChild.GetComponent<BaseUI>();
@@ -120,7 +127,7 @@ public class UIManager : SingletonBehaviour<UIManager>
 
     public void CloseAllUI()
     {
-        while(!m_FrontUI)
+        while(m_FrontUI)
         {
             m_FrontUI.CloseUI();
         }
@@ -133,5 +140,34 @@ public class UIManager : SingletonBehaviour<UIManager>
         {
             m_GoodsUI.SetValues();
         }
+    }
+
+    public void Fade(Color color, float startAlpha, float endAlpha, float duration, float startDelay, bool deactivateOnFinish, Action onFinish = null)
+    {
+        StartCoroutine(FadeCoroutine(color, startAlpha, endAlpha, duration, startDelay, deactivateOnFinish, onFinish));
+    }
+
+    IEnumerator FadeCoroutine(Color color, float startAlpha, float endAlpha, float duration, float startDelay, bool deactivateOnFinish, Action onFinish)
+    {
+        yield return new WaitForSeconds(startDelay);
+
+        fadeImage.transform.localScale = Vector3.one;
+        fadeImage.color = new Color(color.r, color.g, color.b, startAlpha);
+
+        var startTime = Time.realtimeSinceStartup;
+        while(Time.realtimeSinceStartup - startTime < duration)
+        {
+            fadeImage.color = new Color(color.r, color.g, color.b, Mathf.Lerp(startAlpha, endAlpha, (Time.realtimeSinceStartup - startTime) / duration));
+            yield return null;
+        }
+
+        fadeImage.color = new Color(color.r, color.g, color.b, endAlpha);
+
+        if(deactivateOnFinish)
+        {
+            fadeImage.transform.localScale = Vector3.zero;
+        }
+
+        onFinish?.Invoke();
     }
 }
