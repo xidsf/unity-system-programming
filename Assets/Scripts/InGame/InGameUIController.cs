@@ -11,7 +11,7 @@ public class InGameUIController : MonoBehaviour
     {
         if(!focus)
         {
-            if(!InGameManager.Instance.isPause)
+            if(!InGameManager.Instance.isPause && !InGameManager.Instance.isStageClear)
             {
                 var uiData = new BaseUIData();
                 UIManager.Instance.OpenUI<PauseUI>(uiData);
@@ -23,7 +23,7 @@ public class InGameUIController : MonoBehaviour
 
     private void Update()
     {
-        if(!InGameManager.Instance.isPause)
+        if(!InGameManager.Instance.isPause && !InGameManager.Instance.isStageClear)
         {
             HandleInput();
         }

@@ -8,6 +8,7 @@ public class InGameManager : SingletonBehaviour<InGameManager>
     public bool isStageClear { get; private set; }
 
     private int m_SelectedChapter;
+    private ChapterData m_currChapterData;
     private int m_CurrStage;
     private const string STAGE_PATH = "Stages";
     private Transform m_StageTransform;
@@ -45,6 +46,11 @@ public class InGameManager : SingletonBehaviour<InGameManager>
             return;
         }
         m_SelectedChapter = userPlayData.CurrentSelectedChapter;
+        m_currChapterData = DataTableManager.Instance.GetChapterData(m_SelectedChapter);
+        if(m_currChapterData == null)
+        {
+            Logger.LogError($"currChapterData not found. chapter:{m_SelectedChapter}");
+        }
     }
 
     private void LoadBackground()
@@ -121,13 +127,52 @@ public class InGameManager : SingletonBehaviour<InGameManager>
         yield return new WaitForSeconds(1f);
 
         var stageClearUI = UIManager.Instance.GetActiveUI<StageClearUI>();
-        stageClearUI.CloseUI();
+        if(stageClearUI)
+        {
+            stageClearUI.CloseUI();
+        }
 
-        isStageClear = false;
+        if(IsAllClear())
+        {
+            ChapterClearUI();
+        }
+        else
+        {
+            isStageClear = false;
 
-        m_CurrStage++;
-        LoadStage();
+            m_CurrStage++;
+            LoadStage();
+        }
+
+            
     }
+
+    private bool IsAllClear()
+    {
+        return m_currChapterData.totalStage == m_CurrStage;
+    }
+
+    private void ChapterClearUI()
+    {
+        AudioManager.Instance.PlaySFX(SFX.chapter_clear);
+        var userPlayData = UserDataManager.Instance.GetUserData<UserPlayData>();
+        if(userPlayData == null)
+        {
+            Logger.Log($"userPlayData cannot found");
+            return;
+        }
+        var chapterClearData = new ChapterClearUIData();
+        chapterClearData.clearChapter = m_SelectedChapter;
+        chapterClearData.earnReward = m_SelectedChapter > userPlayData.MaxClearChapter;
+        UIManager.Instance.OpenUI<ChapterClearUI>(chapterClearData);
+        if(m_SelectedChapter > userPlayData.MaxClearChapter)
+        {
+            userPlayData.MaxClearChapter++;
+            userPlayData.CurrentSelectedChapter = userPlayData.MaxClearChapter + 1;
+            userPlayData.SaveData();
+        }
+    }
+
 
     public void PauseGame()
     {

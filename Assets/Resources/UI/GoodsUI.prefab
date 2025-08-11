@@ -369,7 +369,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62572c0a422ec8b40b440563c7b3f3cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  goldIcon: {fileID: 2628845927701205013}
   goldAmountText: {fileID: 2628845927228281542}
+  gemIcon: {fileID: 2628845928066386456}
   gemAmountText: {fileID: 2628845926525999913}
 --- !u!1 &2628845926909258304
 GameObject:
