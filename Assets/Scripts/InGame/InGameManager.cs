@@ -171,6 +171,23 @@ public class InGameManager : SingletonBehaviour<InGameManager>
             userPlayData.CurrentSelectedChapter = userPlayData.MaxClearChapter + 1;
             userPlayData.SaveData();
         }
+
+        var userAchievementData = UserDataManager.Instance.GetUserData<UserAchievementData>();
+        if(userAchievementData != null)
+        {
+            switch(m_SelectedChapter)
+            {
+                case 1:
+                    userAchievementData.ProgressAchievement(AchievementType.ClearChapter1, 1);
+                    break;
+                case 2:
+                    userAchievementData.ProgressAchievement(AchievementType.ClearChapter2, 1);
+                    break;
+                case 3:
+                    userAchievementData.ProgressAchievement(AchievementType.ClearChapter3, 1);
+                    break;
+            }
+        }
     }
 
 

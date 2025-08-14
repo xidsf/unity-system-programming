@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static GlobalDefine;
 
 public class DataTableManager : SingletonBehaviour<DataTableManager>
 {
@@ -12,6 +13,7 @@ public class DataTableManager : SingletonBehaviour<DataTableManager>
         base.Init();
         LoadChapterDataTable();
         LoadItemData();
+        LoadAchievementDataTable();
     }
 
     #region CHAPTER_DATA
@@ -70,6 +72,41 @@ public class DataTableManager : SingletonBehaviour<DataTableManager>
     public ItemData GetItemData(int itemID)
     {
         return itemDataTable.Where(item => item.itemID == itemID).FirstOrDefault();
+    }
+
+    #endregion
+
+    #region ACHIEVEMENT_DATA
+    private const string ACHIEVEMENT_DATA_TABLE = "AchievementDataTable";
+    private List<AchievementData> achivementDataTable = new();
+    public List<AchievementData> GetAchievementDataTable()
+    {
+        return achivementDataTable;
+    }
+
+    private void LoadAchievementDataTable()
+    {
+        var parseDataTable = CSVReader.Read($"{DATA_PATH}/{ACHIEVEMENT_DATA_TABLE}");
+
+        foreach (var data in parseDataTable)
+        {
+            var achievementData = new AchievementData
+            {
+                achievementType = (AchievementType)Enum.Parse(typeof(AchievementType), data["achievement_type"].ToString()),
+                achievementName = data["achievement_name"].ToString(),
+                achievementGoal = Convert.ToInt32(data["achievement_goal"]),
+                AchievementRewardType = (GlobalDefine.RewardType)(Enum.Parse(typeof(RewardType), data["achievement_reward_type"].ToString())),
+                AchievementRewardAmount = Convert.ToInt32(data["achievement_reward_amount"])
+            };
+
+            achivementDataTable.Add(achievementData);
+            Logger.Log($"Add {achievementData.achievementName} achievement");
+        }
+    }
+
+    public AchievementData GetAchievementData(AchievementType achievementType)
+    {
+        return achivementDataTable.Where(item => item.achievementType == achievementType).FirstOrDefault();
     }
 
     #endregion

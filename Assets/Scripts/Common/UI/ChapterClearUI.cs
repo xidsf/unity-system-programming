@@ -57,6 +57,12 @@ public class ChapterClearUI : BaseUI
             goldUpdateMsg.isAdd = true;
             Messenger.Default.Publish(goldUpdateMsg);
 
+            var userAchievementData = UserDataManager.Instance.GetUserData<UserAchievementData>();
+            if(userAchievementData != null)
+            {
+                userAchievementData.ProgressAchievement(AchievementType.CollectGold, chapterData.ChapterRewardGold);
+            }
+
             var gemUpdateMsg = new GemUpdateMsg();
             gemUpdateMsg.isAdd = true;
             Messenger.Default.Publish(gemUpdateMsg);

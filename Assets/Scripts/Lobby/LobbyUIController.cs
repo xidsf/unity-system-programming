@@ -102,4 +102,12 @@ public class LobbyUIController : MonoBehaviour
         AudioManager.Instance.StopBGM();
         LobbyManager.Instance.StartInGame();
     }
+
+    public void OnClickAchievementButton()
+    {
+        Logger.Log("OnClickAchievementButton");
+
+        var uiData = new BaseUIData();
+        UIManager.Instance.OpenUI<AchievementUI>(uiData);
+    }
 }

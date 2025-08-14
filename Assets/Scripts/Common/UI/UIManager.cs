@@ -77,7 +77,7 @@ public class UIManager : SingletonBehaviour<UIManager>
             return;
         }
 
-        var siblingIndex = m_UICanvasTransform.childCount - 1;
+        var siblingIndex = m_UICanvasTransform.childCount - 2;
         ui.Init(m_UICanvasTransform);
         ui.transform.SetSiblingIndex(siblingIndex);
         ui.gameObject.SetActive(true);
